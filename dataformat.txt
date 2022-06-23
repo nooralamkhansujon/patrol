@@ -1,0 +1,81 @@
+[2022-06-19 08:50:37] local.INFO: array (
+  'type' => 'data',
+  'data' =>
+  array (
+    'timestamp' => 1655628637,
+    'device_id' => '91451173',
+    'checkpoint_id' => '7b0092f696',
+  ),
+)
+[2022-06-19 08:59:40] local.INFO: array (
+  'type' => 'data',
+  'data' =>
+  array (
+    'timestamp' => 1655629180,
+    'device_id' => '91451173',
+    'checkpoint_id' => '7b0092f696',
+  ),
+)
+[2022-06-19 09:05:21] local.INFO: array (
+  'type' => 'data',
+  'data' =>
+  array (
+    'timestamp' => 1655629521,
+    'device_id' => '91451173',
+    'checkpoint_id' => '1603624529',
+  ),
+)
+[2022-06-19 09:14:34] local.INFO: array (
+  'type' => 'data',
+  'data' =>
+  array (
+    'timestamp' => 1655630074,
+    'device_id' => '91451173',
+    'checkpoint_id' => '20a5652abe',
+  ),
+)
+[2022-06-19 09:17:14] local.INFO: array (
+  'type' => 'data',
+  'data' =>
+  array (
+    'timestamp' => 1655630234,
+    'device_id' => '91451173',
+    'checkpoint_id' => '7b0092f696',
+  ),
+)
+[2022-06-19 09:25:51] local.INFO: array (
+  'type' => 'data',
+  'data' =>
+  array (
+    'timestamp' => 1655630750,
+    'device_id' => '91451173',
+    'checkpoint_id' => '20a5652abe',
+  ),
+)
+[2022-06-19 09:33:39] local.INFO: array (
+  'type' => 'data',
+  'data' =>
+  array (
+    'timestamp' => 1655631219,
+    'device_id' => '91451173',
+    'checkpoint_id' => '20a5652abe',
+  ),
+)
+[2022-06-19 09:39:00] local.INFO: array (
+  'type' => 'data',
+  'data' =>
+  array (
+    'timestamp' => 1655631540,
+    'device_id' => '91451173',
+    'checkpoint_id' => '7b0092f696',
+  ),
+)
+[2022-06-19 09:41:05] local.INFO: array (
+  'type' => 'data',
+  'data' =>
+  array (
+    'timestamp' => 1655631664,
+    'device_id' => '91451173',
+    'checkpoint_id' => '1603624529',
+  ),
+)
