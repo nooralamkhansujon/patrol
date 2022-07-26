@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccountsController;
 use App\Http\Controllers\Auth\AuthenticationController;
 use App\Http\Controllers\CheckPointController;
+use App\Http\Controllers\CheckpointLogController;
 use App\Http\Controllers\DeviceController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrganizationController;
@@ -35,7 +36,6 @@ Route::post('/login', [AuthenticationController::class, 'Login'])->name('login')
 Route::get('/', [HomeController::class, 'home'])->name('home')->middleware('auth');
 
 Route::prefix('/organizations')->name('organizations.')->middleware('auth')->group(function () {
-
     Route::post('/store', [OrganizationController::class, 'store'])->name('store');
     Route::post('/update/{organization_id}', [OrganizationController::class, 'update'])->name('update');
     Route::get('/', [OrganizationController::class, 'index'])->name('index');
@@ -97,6 +97,7 @@ Route::prefix('/checkpoint')->name('checkpoint.')->middleware('auth')->group(fun
     Route::post('/delete', [CheckPointController::class, 'destroy'])->name('delete');
     // Route::get('/get', [AccountsController::class, 'getUser']);
     Route::get('/get-ajax', [CheckPointController::class, 'getCheckpoints']);
+
     Route::get('/', [CheckPointController::class, 'index'])->name('index');
 });
 
@@ -109,6 +110,8 @@ Route::prefix('/device')->name('device.')->middleware('auth')->group(function ()
     Route::post('/delete', [DeviceController::class, 'destroy'])->name('delete');
     Route::get('/get-ajax', [DeviceController::class, 'getDevices']);
     Route::get('/', [DeviceController::class, 'index'])->name('index');
+
+
 });
 
 //patrol management section
@@ -116,7 +119,18 @@ Route::prefix('/patrol_task')->name('patrol_task.')->middleware('auth')->group(f
     Route::post('/store', [PatrolTaskController::class, 'store'])->name('store');
     Route::post('/update', [PatrolTaskController::class, 'update'])->name('update');
     Route::post('/delete', [PatrolTaskController::class, 'destroy'])->name('delete');
-    Route::get('/get-ajax', [PatrolTaskController::class, 'getDevices']);
+    Route::get('/get-ajax', [PatrolTaskController::class, 'getPatrolTask']);
     Route::get('/', [PatrolTaskController::class, 'index'])->name('index');
     Route::get('/lineTree', [PatrolTaskController::class, 'routeLineTree']);
+    Route::get('/routes', [PatrolTaskController::class, 'getRoutes']);
+});
+
+
+Route::prefix('/checkpointLogs')->name('checkpointLogs.')->middleware('auth')->group(function () {
+    // Route::post('/update', [CheckpointLogController::class, 'update'])->name('update');
+    // Route::post('/delete', [CheckpointLogController::class, 'destroy'])->name('delete');
+    Route::get('/get-ajax', [CheckpointLogController::class, 'getCheckPointLogs']);
+    Route::get('/', [CheckpointLogController::class, 'index'])->name('index');
+
+    Route::get('/checkpoints',[CheckpointLogController::class,'getCheckpoints']);
 });

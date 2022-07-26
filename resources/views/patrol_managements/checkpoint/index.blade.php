@@ -15,7 +15,6 @@
         #formOpt-roleIds {
             width: 250px !important;
         }
-
     </style>
 @endsection
 
@@ -53,7 +52,8 @@
                             <form name="formQuery" action="#"
                                 class="form-inline d-flex justify-content-start align-items-center">
                                 <div class="form-group">
-                                    <input type="text" class="form-control" name="search" placeholder="Name, code number">
+                                    <input type="text" class="form-control" name="search"
+                                        placeholder="Name, code number">
                                 </div>
                                 <div class="form-group d-flex mx-2">
                                     <label class="control-label">Organization</label>
@@ -67,7 +67,8 @@
                                 </button>
                                 <button id="btn-excel" type="button" class="btn btn-default">
                                     <i class="fa fa-download"></i>Export</button>
-                                <button id="btn-upload" type="button" class="btn btn-default">
+                                <button id="btn-upload" type="button" data-bs-target="#modal-upload" data-bs-toggle="modal"
+                                    class="btn btn-default">
                                     <i class="fa fa-upload"></i>Import
                                 </button>
                             </form>
@@ -138,7 +139,8 @@
                             <h4 class="modal-title">Import checkpoint</h4>
                         </div>
                         <div class="modal-body">
-                            <form id="f-upload" name="formUpload" class="form-horizontal" action="../checkpoint/upload">
+                            <form id="f-upload" name="formUpload" class="form-horizontal"
+                                action="../checkpoint/upload">
                                 <div class="form-group">
                                     <input type="file" class="form-control" name="file"
                                         accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">

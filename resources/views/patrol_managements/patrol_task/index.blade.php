@@ -3,7 +3,7 @@
     {{-- <link rel="stylesheet" href="{{ asset('css/hummingbird-treeview.css') }}"> --}}
     <link rel="stylesheet" href="{{ asset('css/hua.css') }}" />
     {{-- <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}" /> --}}
-    <link rel="stylesheet" href="{{asset('css/glyphicon.css')}}">
+    <link rel="stylesheet" href="{{ asset('css/glyphicon.css') }}">
 
     <link rel="stylesheet" href="{{ asset('css/zTreeStyle/zTreeStyle.css') }}" />
     <link rel="stylesheet" href="{{ asset('css/toastr.css') }}" />
@@ -19,7 +19,6 @@
         #formOpt-roleIds {
             width: 250px !important;
         }
-
     </style>
 @endsection
 
@@ -27,7 +26,7 @@
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <div class="fs-3">Routes</div>
+                <div class="fs-3">Patrol Task</div>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
@@ -64,8 +63,10 @@
                                         </div>
                                         <div class="col-md-8">
                                             <div class="form-group d-flex justify-content-between align-items-center">
-                                                <label >Start date</label>
-                                                <input type="text" class="form-control datetime" name="startDate">-<input type="text" title="End Date" class="form-control input-sm datetime" name="endDate">
+                                                <label>Start date</label>
+                                                <input type="text" class="form-control datetime" name="startDate">-<input
+                                                    type="text" title="End Date" class="form-control input-sm datetime"
+                                                    name="endDate">
                                             </div>
                                         </div>
                                         <div class="col-md-2">
@@ -102,19 +103,29 @@
                                             </div>
                                         </div>
                                         <div class="col-md-6 d-flex justify-content-left align-items-center">
-                                            <button id="btn-query" type="button" class="btn btn-primary"><i class="fa fa-search"></i>Query</button>
+                                            <button id="btn-query" type="button" class="btn btn-primary"><i
+                                                    class="fa fa-search"></i>Query</button>
                                             <div class="btn-group">
-                                            <button id="btn-add-day" type="button" class="btn btn-success"><i class="fa fa-plus"></i>Add</button>
-                                            <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                <span class="caret"></span>
-                                                <span class="sr-only">Toggle Dropdown</span>
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                                <li class="dropdown-item"><a id="a-add-day" href="#">Daily</a></li>
-                                                <li><a id="a-add-week" href="#">Weekly</a></li>
-                                                <li><a id="a-add-month" href="#">Monthly</a></li>
-                                                <li><a id="a-add-cycle" href="#">Cycle</a></li>
-                                            </ul>
+                                                @can('create', App\Models\PatrolTask::class)
+                                                    <button id="btn-add-day" type="button" class="btn btn-success"><i
+                                                            class="fa fa-plus"></i>Add
+                                                    </button>
+                                                @endcan
+                                                <button type="button" class="btn btn-success dropdown-toggle"
+                                                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    <span class="caret"></span>
+                                                    <span class="sr-only">Toggle Dropdown</span>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li class="dropdown-item"><a id="a-add-day" href="#">Daily</a>
+                                                    </li>
+                                                    <li class="dropdown-item"><a id="a-add-week"
+                                                            href="#">Weekly</a></li>
+                                                    <li class="dropdown-item"><a id="a-add-month"
+                                                            href="#">Monthly</a></li>
+                                                    <li class="dropdown-item"><a id="a-add-cycle"
+                                                            href="#">Cycle</a></li>
+                                                </ul>
                                             </div>
                                         </div>
                                     </div>
@@ -129,18 +140,24 @@
             </div>
             <!-- /.row (main row) -->
 
-            <div id="q-tree-wrap" class="combo-tree"><ul id="q-tree" class="ztree"></ul></div>
-            <div id="line-day-tree-wrap" class="combo-tree"><ul id="line-day-tree" class="ztree"></ul></div>
+            <div id="q-tree-wrap" class="combo-tree">
+                <ul id="q-tree" class="ztree"></ul>
+            </div>
+            <div id="line-day-tree-wrap" class="combo-tree">
+                <ul id="line-day-tree" class="ztree"></ul>
+            </div>
             {{-- modal sections --}}
             <div id="modal-plan-day" class="modal fade" role="dialog" data-backdrop="static">
                 <div class="modal-dialog modal-hua modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
                             <h4 class="modal-title">宸ヤ綔璁″垝(姣忓ぉ)</h4>
                         </div>
                         <div class="modal-body">
-                            <form id="form-plan-day" name="formPlanDay" class="form-horizontal" action="#" style="overflow: hidden;">
+                            <form id="form-plan-day" name="formPlanDay" class="form-horizontal" action="#"
+                                style="overflow: hidden;">
                                 <input type="hidden" name="id">
                                 <input type="hidden" name="type" value="0">
                                 <input type="hidden" name="reCreate">
@@ -156,36 +173,40 @@
                                         <div class="form-group">
                                             <label class="control-label col-xs-3">Route</label>
                                             <div class="col-xs-9" style="position: relative;">
-                                                <input id="form-day-line" class="form-control input-tree" name="line" placeholder='Please choose a route' readonly="readonly">
+                                                <input id="form-day-line" class="form-control input-tree" name="line"
+                                                    placeholder='Please choose a route' readonly="readonly">
                                                 <input type="hidden" name="lineId">
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label class="control-label col-xs-3">Start date</label>
                                             <div class="col-xs-9">
-                                                <input id="form-day-startDate" class="form-control day-datetime" name="startDate" type="text">
+                                                <input id="form-day-startDate" class="form-control day-datetime"
+                                                    name="startDate" type="text">
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label class="control-label col-xs-3">End date</label>
                                             <div class="col-xs-9">
-                                                <input id="form-day-endDate" class="form-control day-datetime" name="endDate" type="text" placeholder='If it is not filled in, it is permanently valid'>
+                                                <input id="form-day-endDate" class="form-control day-datetime"
+                                                    name="endDate" type="text"
+                                                    placeholder='If it is not filled in, it is permanently valid'>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label class="control-label col-xs-3">Week</label>
                                             <div class="col-xs-9">
                                                 <label class="checkbox-inline">
-                                                  <input type="checkbox" name="mon">Monday
+                                                    <input type="checkbox" name="mon">Monday
                                                 </label>
                                                 <label class="checkbox-inline">
-                                                  <input type="checkbox" name="tue">Tuesday
+                                                    <input type="checkbox" name="tue">Tuesday
                                                 </label>
                                                 <label class="checkbox-inline">
-                                                  <input type="checkbox" name="wed">Wednesday
+                                                    <input type="checkbox" name="wed">Wednesday
                                                 </label>
                                                 <label class="checkbox-inline">
-                                                  <input type="checkbox" name="thu">Thursday
+                                                    <input type="checkbox" name="thu">Thursday
                                                 </label>
                                             </div>
                                         </div>
@@ -193,21 +214,23 @@
                                             <label class="control-label col-xs-3"></label>
                                             <div class="col-xs-9">
                                                 <label class="checkbox-inline">
-                                                  <input type="checkbox" name="fri">Friday
+                                                    <input type="checkbox" name="fri">Friday
                                                 </label>
                                                 <label class="checkbox-inline">
-                                                  <input type="checkbox" name="sat">Saturday
+                                                    <input type="checkbox" name="sat">Saturday
                                                 </label>
                                                 <label class="checkbox-inline">
-                                                  <input type="checkbox" name="sun">Sunday
+                                                    <input type="checkbox" name="sun">Sunday
                                                 </label>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
                                         <div style="margin-bottom: 15px;">
-                                            <button id="btn-add-shift" type="button" class="btn btn-success">Add shift</button>
-                                            <button id="btn-remove-shift" type="button" class="btn btn-danger">Delete shift</button>
+                                            <button id="btn-add-shift" type="button" class="btn btn-success">Add
+                                                shift</button>
+                                            <button id="btn-remove-shift" type="button" class="btn btn-danger">Delete
+                                                shift</button>
                                         </div>
                                         <table id="shift-table"></table>
                                     </div>
@@ -235,8 +258,7 @@
                                     <label class="control-label col-xs-3">Start time</label>
                                     <div class="col-xs-9">
                                         <div class="bootstrap-timepicker">
-                                            <input
-                                            class="form-control uitime" name="startTime" value="00:00">
+                                            <input class="form-control uitime" name="startTime" value="00:00">
                                         </div>
                                     </div>
                                 </div>
@@ -244,9 +266,7 @@
                                     <label class="control-label col-xs-3">End time</label>
                                     <div class="col-xs-9">
                                         <div class="bootstrap-timepicker">
-                                            <input
-                                            class="form-control uitime"
-                                            name="endTime" value="00:00">
+                                            <input class="form-control uitime" name="endTime" value="00:00">
                                         </div>
                                     </div>
                                 </div>
@@ -337,8 +357,8 @@
                                 <div class="form-group plan-cycle row">
                                     <label class="control-label col-sm-3">End date</label>
                                     <div class="col-sm-9">
-                                        <input id="form-endDate" class="form-control datetime" name="endDate" type="text"
-                                            placeholder='If it is not filled in, it is permanently valid'>
+                                        <input id="form-endDate" class="form-control datetime" name="endDate"
+                                            type="text" placeholder='If it is not filled in, it is permanently valid'>
                                     </div>
                                 </div>
                                 <div class="form-group plan-cycle row" style="display: none;">
@@ -371,28 +391,64 @@
     {{-- <script src="{{ asset('js/bootstrap3.min.js') }}"></script> --}}
     {{-- <script src="{{ asset('js/jquery.ztree.all.js') }}"></script> --}}
     <script src="{{ asset('js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('js/jquery.cookie.js') }}"></script>
     <script src="{{ asset('js/dropdownclick.js') }}"></script>
-    <script src="{{ asset('js/jquery.ztree.all.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap-table.min.js') }}"></script>
+    <script src="{{ asset('js/jquery.ztree.all.min.js') }}"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"
         integrity="sha512-2ImtlRlf2VVmiGZsjm9bEyhjGW4dU7B6TNwh/hx/iSByxNENtj3WVE6o/9Lj4TJeVXPi4bnOIMXFIJJAeufa0A=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 
+    <script src="{{ asset('js/language.js') }}"></script>
     <script src="{{ asset('js/cq.js') }}"></script>
     <script src="{{ asset('js/base.js') }}"></script>
-    <script src="{{ asset('js/language.js') }}"></script>
-    <script src="{{ asset('js/jquery-ui.min.js') }}"></script>
     <script src="{{ asset('js/toaster.js') }}"></script>
+    <script src="{{ asset('js/jquery-ui.min.js') }}"></script>
+    <script src="{{ asset('js/alarmHint.js') }}"></script>
     {{-- <script src="{{ asset('js/bootstrap-select.min.js') }}"></script> --}}
     <script src="{{ asset('js/bootstrap-datetimepicker.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap-timepicker.min.js') }}"></script>
     <script src="{{ asset('js/plan.js') }}"></script>
 
     <script type="text/javascript">
-        $(function() {
-            planOpt.init('1', '');
-        });
+        // $(function() {
+        //     planOpt.init('1', '');
+        // });
     </script>
+    @if (auth()->user()->can('updateView', App\Models\PatrolTask::class) &&
+        auth()->user()->can('deleteView', App\Models\PatrolTask::class))
+        <script>
+            $(document).ready(function() {
+                $(function() {
+                    planOpt.init('1', '1');
+                });
+            });
+        </script>
+    @elseif(auth()->user()->can('updateView', App\Models\PatrolTask::class))
+        <script>
+            $(document).ready(function() {
+                $(function() {
+                    planOpt.init('1', '1');
+                });
+            });
+        </script>
+    @elseif(auth()->user()->can('deleteView', App\Models\PatrolTask::class))
+        <script>
+            $(document).ready(function() {
+                $(function() {
+                    planOpt.init('', '1');
+                });
+            });
+        </script>
+    @else
+        <script>
+            $(document).ready(function() {
+                $(function() {
+                    planOpt.init('', '');
+                });
+            });
+        </script>
+    @endif
 @endpush

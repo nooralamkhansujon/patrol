@@ -15,7 +15,6 @@
         #formOpt-roleIds {
             width: 250px !important;
         }
-
     </style>
 @endsection
 
@@ -69,8 +68,11 @@
                                 </div>
                                 <button id="btn-query" type="button" class="btn btn-primary mr-1"><i
                                         class="fa fa-search"></i>Query</button>
-                                <button id="btn-add-ui" type="button" class="btn btn-success ml-1"><i
-                                        class="fa fa-plus"></i>Add</button>
+                                @can('create', App\Models\User::class)
+                                    <button id="btn-add-ui" type="button" class="btn btn-success ml-1"><i
+                                            class="fa fa-plus"></i>Add
+                                    </button>
+                                @endcan
                             </form>
                         </div>
                         <div class="box-body">
@@ -85,7 +87,7 @@
                 <ul id="q-tree" class="ztree"></ul>
             </div>
             {{-- modal sections --}}
-            <div id="modal-user" class="modal fade" role="dialog" data-bs-backdrop="static">
+            <div id="modal-user" class="modal fade" role="dialog" data-backdrop="static">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -219,7 +221,34 @@
 
         $(function() {
             areaTree.init();
-            userOpt.init('1', '1', '1');
+            // userOpt.init('1', '1', '1');
         });
     </script>
+
+    @if (auth()->user()->can('updateView', App\Models\User::class) &&
+        auth()->user()->can('deleteView', App\Models\User::class))
+        <script>
+            $(document).ready(function() {
+                $(function() {
+                    userOpt.init('1', '1', '1');
+                });
+            });
+        </script>
+    @elseif(auth()->user()->can('updateView', App\Models\User::class))
+        <script>
+            $(document).ready(function() {
+                $(function() {
+                    userOpt.init('1', '', '1');
+                });
+            });
+        </script>
+    @elseif(auth()->user()->can('deleteView', App\Models\User::class))
+        <script>
+            $(document).ready(function() {
+                $(function() {
+                    userOpt.init('', '1', '1');
+                });
+            });
+        </script>
+    @endif
 @endpush

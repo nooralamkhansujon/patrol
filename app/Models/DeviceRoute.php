@@ -16,6 +16,6 @@ class DeviceRoute extends Model
     }
 
     public function route(){
-       return $this->belongsTo(Device::class,'route_id','id');
+       return $this->belongsTo(Route::class,'route_id','id');
     }
 }

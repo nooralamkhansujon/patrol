@@ -49,7 +49,6 @@
         .file-icon {
             color: #C3E1FF;
         }
-
     </style>
 @endsection
 
@@ -80,22 +79,28 @@
             <div class="row bg-white pt-2">
                 <div class="col-md-4">
                     <div class="button_container d-flex justify-content-between mb-3">
-                        <button
-                            class="button_content d-flex flex-column justify-content-center align-items-center py-2 px-4"
-                            id="btn-add">
-                            <span><i class="fa fa-file"></i></span>
-                            <span>Add</span>
-                        </button>
-                        <button id="btn-update"
-                            class="button_content d-flex flex-column justify-content-center align-items-center py-2 px-4">
-                            <span><i class="fas fa-pen-to-square"></i></span>
-                            <span>Modify</span>
-                        </button>
-                        <button id="btn-del"
-                            class="button_content d-flex flex-column justify-content-center align-items-center py-2 px-4">
-                            <span><i class="fas fa-times"></i></span>
-                            <span>Delete</span>
-                        </button>
+                        @can('create', App\Models\Organization::class)
+                            <button
+                                class="button_content d-flex flex-column justify-content-center align-items-center py-2 px-4"
+                                id="btn-add">
+                                <span><i class="fa fa-file"></i></span>
+                                <span>Add</span>
+                            </button>
+                        @endcan
+                        @can('updateView', App\Models\Organization::class)
+                            <button id="btn-update"
+                                class="button_content d-flex flex-column justify-content-center align-items-center py-2 px-4">
+                                <span><i class="fas fa-pen-to-square"></i></span>
+                                <span>Modify</span>
+                            </button>
+                        @endcan
+                        @can('deleteView', App\Models\Organization::class)
+                            <button id="btn-del"
+                                class="button_content d-flex flex-column justify-content-center align-items-center py-2 px-4">
+                                <span><i class="fas fa-times"></i></span>
+                                <span>Delete</span>
+                            </button>
+                        @endcan
                     </div>
                 </div>
             </div>

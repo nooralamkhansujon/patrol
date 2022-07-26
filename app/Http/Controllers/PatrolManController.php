@@ -10,17 +10,28 @@ use Illuminate\Http\Request;
 class PatrolManController extends Controller
 {
     public function index(){
+        $this->authorize('viewany',PatrolMan::class);
         $patrolmans = PatrolMan::all();
         return view('organizations.patrolmans.index',compact('patrolmans'));
     }
     public function getPatrolman(Request $request)
     {
-        $total = PatrolMan::count();
         $limit = $request->limit;
+        if(auth()->user()->type === 'super_admin'){
+            $total     = PatrolMan::count();
+        }else{
+            $total     = PatrolMan::where('organization_id',auth()->user()->organization_id)->count();
+        }
         $totalPage = (int) ceil($total/$limit);
         $offset = $request->offset;
         $pageNum = $offset == 0 ?1:$limit/$offset+1;
-        $patrolman = PatrolMan::skip($request->offset)->take($limit)->orderBy('id',$request->input('order'))->get();
+        if(auth()->user()->type === 'super_admin'){
+            $patrolman = PatrolMan::skip($request->offset)->take($limit)->orderBy('id',$request->input('order'))->get();
+        }else{
+            $patrolman  = PatrolMan::skip($request->offset)->take($limit)->where([
+              ['organization_id','=',auth()->user()->organization_id],
+            ])->orderBy('id',$request->input('order'))->get();
+        }
         $patrolman = PatrolManResource::collection($patrolman);
         // $users = User::all();
         return response()->json(['rows'=>$patrolman,'pageNum'=>$pageNum,'pageSize'=>$limit,'total'=>$total,'totalPage'=>$totalPage]);
@@ -28,15 +39,21 @@ class PatrolManController extends Controller
 
     public function listByAreaId(Request $request)
     {
-        $patrolmans = PatrolMan::where('organization_id',$request->areaId)->get();
+        $patrolmans = PatrolMan::where('organization_id','=',$request->areaId)->get();
         if($patrolmans->count() == 0){
             return response()->json(['error'=>"Patrolman are not exist in this organization"]);
+        }
+        if(auth()->user()->type != 'super_admin' && auth()->user()->organization_id != $request->areaId){
+            return response()->json(['message','UnAuthorized'],403);
         }
         return response()->json($patrolmans);
     }
 
     public function store(Request $request)
     {
+       if(!auth()->user()->can('create',PatrolMan::class)){
+        return response()->json(['message','UnAuthorized '],403);
+       }
         $request->validate([
             'name' =>"required",
             'code_number' => 'required',
@@ -56,14 +73,20 @@ class PatrolManController extends Controller
                 'description'   => $request->input('description'),
              );
             PatrolMan::create($data);
-            return response()->json(['success'=>'PatrolMen has been created Successfully']);
+            return response()->json(['success'=>'PatrolMan has been created Successfully']);
         }catch(Exception $e){
-            // $this->error($e->getMessage());
             return response()->json(['error'=>$e->getMessage()],500);
         }
     }
 
     public function update(Request $request){
+        $patrolman = PatrolMan::find($request->id);
+        if (!$patrolman) {
+            return response()->json(['error'=>'Patrol not found'],404);
+        }
+        if(!auth()->user()->can('update',$patrolman)){
+            return response()->json(['message','UnAuthorized '],403);
+        }
         $request->validate([
             'id'          => 'required',
             'name'        => "required",
@@ -71,10 +94,7 @@ class PatrolManController extends Controller
             'areaId'      => 'required',
             'description' => 'required'
         ]);
-        $patrolman = PatrolMan::find($request->id);
-        if (!$patrolman) {
-            return response()->json(['error'=>'Patrol not found'],404);
-        }
+
 
          //store organization;
          try{
@@ -96,7 +116,10 @@ class PatrolManController extends Controller
     {
         $patrolman = PatrolMan::find($request->id);
         if(!$patrolman){
-            return response()->json(['error'=>'Patrol not found'],404);
+            return response()->json(['error'=>'Patrolman not found'],404);
+        }
+         if(!auth()->user()->can('delete',$patrolman)){
+            return response()->json(['message','UnAuthorized '],403);
         }
         try{
           $patrolman->delete();

@@ -58,7 +58,6 @@ var areaTree = {
     },
 };
 
-
 function onQueryAreaTreeCheck() {
     var nodes = areaTree.queryTree.getCheckedNodes(true);
     var v = "";
@@ -202,7 +201,7 @@ var planOpt = {
             allowClear: true,
             placeholder: "All",
             ajax: {
-                url: "../line/query",
+                url: "../patrol_task/routes",
                 dataType: "json",
                 delay: 250,
                 data: function (params, page) {
@@ -346,12 +345,12 @@ var planOpt = {
                 toastr.error(language.plan.error.line);
                 return;
             }
-            formShift.startTime.value = "00:00";//startTime
+            formShift.startTime.value = "00:00"; //startTime
             formShift.endTime.value = "00:00";
             formShift.batch.checked = false;
             $("#batch-item").hide();
-            formShift.patrolDuration.value = 0;//patrol time
-            formShift.restDuration.value = 0;//break time
+            formShift.patrolDuration.value = 0; //patrol time
+            formShift.restDuration.value = 0; //break time
             $("#modal-shift").modal("show");
         });
         $("#btn-remove-shift").on("click", function () {
@@ -406,6 +405,13 @@ var planOpt = {
                 var s = new Date(startTime.getTime());
                 var e = new Date(startTime.getTime());
                 e.setMinutes(e.getMinutes() + patrolDuration);
+                console.log(s, "s");
+                console.log(e, "e");
+                // var row = {
+                //     uuid: generateUUID(),
+                //     startTime: s.getTime(),
+                //     endTime: e.getTime(),
+                // };
                 while (e.getTime() <= endTime.getTime()) {
                     var row = {
                         uuid: generateUUID(),
@@ -793,11 +799,11 @@ var planOpt = {
         return null;
     },
     url: {
-        query: "../patrol_task",
+        query: "../patrol_task/get-ajax",
         add: "../patrol_task/store",
-        update: "../plan/update",
-        remove: "../plan/remove",
-        removeBatch: "../plan/removeBatch",
+        update: "../patrol_task/update",
+        remove: "../patrol_task/remove",
+        removeBatch: "../patrol_task/removeBatch",
     },
     query: function () {
         planOpt.queryParams.search = formQuery.search.value;
@@ -954,6 +960,7 @@ var planOpt = {
             sat: sat,
             sun: sun,
             dayPlanTimeData: dayPlanTimeData,
+            _token: $('meta[name="csrf-token"]').attr("content"),
         };
     },
     addDay: function () {
@@ -963,7 +970,7 @@ var planOpt = {
         }
         MaskUtil.mask(language.common.tip.adding);
         $.post("../patrol_task/store", data, function (data) {
-            if (data.result) {
+            if (data.success) {
                 planOpt.refresh();
                 $("#modal-plan-day").modal("hide");
                 toastr.success(language.common.tip.added);
@@ -1191,7 +1198,10 @@ var planOpt = {
         MaskUtil.mask(language.common.tip.removing);
         $.ajax({
             url: planOpt.url.remove,
-            data: { id: id,  _token: $('meta[name="csrf-token"]').attr("content"), },
+            data: {
+                id: id,
+                _token: $('meta[name="csrf-token"]').attr("content"),
+            },
             success: function (data) {
                 if (data["result"]) {
                     planOpt.refresh();

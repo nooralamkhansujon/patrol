@@ -12,23 +12,39 @@ class CheckPointController extends Controller
 {
     public function index()
     {
+        $this->authorize('viewany',CheckPoint::class);
         return view('patrol_managements.checkpoint.index');
     }
 
     public function getCheckpoints(Request $request)
     {
-        $total = CheckPoint::count();
         $limit = $request->limit;
+        if(auth()->user()->type === 'super_admin'){
+            $total  = CheckPoint::count();
+        }else{
+            $total  = CheckPoint::where('organization_id',auth()->user()->organization_id)->count();
+        }
         $totalPage = (int) ceil($total/$limit);
+
         $offset = $request->offset;
         $pageNum = $offset == 0 ?1:$limit/$offset+1;
-        $checkpoints = CheckPoint::skip($request->offset)->take($limit)->orderBy('id',$request->input('order'))->get();
+
+        if(auth()->user()->type === 'super_admin'){
+            $checkpoints = CheckPoint::skip($request->offset)->take($limit)->orderBy('id',$request->input('order'))->get();
+        }else{
+              $checkpoints   = CheckPoint::skip($request->offset)->take($limit)->where([
+              ['organization_id','=',auth()->user()->organization_id],
+            ])->orderBy('id',$request->input('order'))->get();
+        }
         $checkpoints = CheckPointResource::collection($checkpoints);
         return response()->json(['rows'=>$checkpoints,'pageNum'=>$pageNum,'pageSize'=>$limit,'total'=>$total,'totalPage'=>$totalPage]);
     }
 
     public function store(Request $request)
     {
+        if(!auth()->user()->can('create',CheckPoint::class)){
+            return response()->json(['message','UnAuthorized'],403);
+        }
         $request->validate([
             'name'           => "required",
             'code_number'    => "required",
@@ -59,6 +75,9 @@ class CheckPointController extends Controller
         $checkpoint = CheckPoint::find($request->id);
         if (!$checkpoint) {
             return response()->json(['error'=>'Checkpoint not found'],404);
+        }
+        if(!auth()->user()->can('update',$checkpoint)){
+            return response()->json(['message','UnAuthorized '],403);
         }
         $request->validate([
             'id'       => 'required',
@@ -93,6 +112,9 @@ class CheckPointController extends Controller
         $checkpoint = CheckPoint::find(request()->input('id'));
         if (!$checkpoint) {
             return response()->json(['error'=>'Checkpoint not found'],404);
+        }
+        if(!auth()->user()->can('delete',$checkpoint)){
+            return response()->json(['message','UnAuthorized '],403);
         }
         try {
             $checkpoint->delete();

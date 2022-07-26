@@ -15,5 +15,8 @@ class PlanTime extends Model
          'end_time',
     ];
 
+    public function patrolTask(){
+        return $this->belongsTo(PatrolTask::class,'task_id','id');
+    }
 
 }

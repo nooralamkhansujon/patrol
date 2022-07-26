@@ -13,16 +13,25 @@ class RoleController extends Controller
 {
     public function index()
     {
-        $roles = Role::latest()->get();
-        // dd($roles);
+        $this->authorize('viewany',Role::class);
+        if(auth()->user()->type === 'super_admin'){
+            $roles = Role::latest()->get();
+        }else{
+            $roles =  auth()->user()->roles;
+        }
         return view('organizations.roles.index', compact('roles'));
     }
     public function getRole(Request $request)
     {
-        $role = new RoleResource(Role::with('permissions')->find($request->id), true);
+        $role =Role::with('permissions')->find($request->id);
+
         if (!$role) {
             return response()->json(['error' => "Role Not Found"], 404);
         }
+        if(!auth()->user()->can('view',$role)){
+            return response()->json(['message','UnAuthorized '],403);
+        }
+        $role = new RoleResource($role,true);
         return response()->json(compact('role'));
     }
     public function getRolesAjax()
@@ -39,7 +48,9 @@ class RoleController extends Controller
 
     public function store(Request $request)
     {
-
+       if(!auth()->user()->can('create',App\Models\Role::class)){
+        return response()->json(['message','UnAuthorized '],403);
+       }
         $request->validate([
             'name' => "required",
             'description' => 'required',
@@ -66,20 +77,21 @@ class RoleController extends Controller
             $role = Role::with('permissions')->find($role->id);
             $role = new RoleResource($role);
             return response()->json(compact('role'));
-            // $this->success('Organization has been created successfully');
         } catch (\Exception $e) {
-            // $this->error($e->getMessage());
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
     public function update(Request $request)
     {
-        //
         $role = Role::find($request->id);
         if (!$role) {
             return response()->json(['error' => 'Role Not Found'], 500);
         }
+        if(!auth()->user()->can('update',$role)){
+            return response()->json(['message','UnAuthorized '],403);
+        }
+
         $request->validate([
             'name'             => "required",
             'description'      => 'required',
@@ -103,7 +115,6 @@ class RoleController extends Controller
             }
             return response()->json(['role' => $role]);
         } catch (\Exception $e) {
-            // $this->error($e->getMessage());
             return response()->json($e->getMessage());
         }
     }
@@ -114,6 +125,10 @@ class RoleController extends Controller
         if (!$role) {
             return response()->json(['error' => "Role Not Found"], 404);
         }
+        if(!auth()->user()->can('delete',$role)){
+            return response()->json(['message','UnAuthorized '],403);
+        }
+
         try {
             $role->permissions()->delete();
             $role->delete();

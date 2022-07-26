@@ -7,7 +7,10 @@ var areaTree = {
                 chkStyle: "checkbox",
                 chkboxType: { Y: "s", N: "s" },
             },
-            view: { dblClickExpand: false, selectedMulti: true },
+            view: {
+                dblClickExpand: false,
+                selectedMulti: true,
+            },
             callback: { onCheck: onQueryAreaTreeCheck },
         },
         opt: {

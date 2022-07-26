@@ -15,7 +15,6 @@
         #formOpt-roleIds {
             width: 250px !important;
         }
-
     </style>
 @endsection
 
@@ -62,8 +61,11 @@
                                 </div>
                                 <button id="btn-query" type="button" class="btn btn-primary"><i
                                         class="fa fa-search"></i>Query</button>
-                                <button id="btn-add-ui" type="button" class="btn btn-success"><i
-                                        class="fa fa-plus"></i>Add</button>
+                                @can('create', App\Models\Route::class)
+                                    <button id="btn-add-ui" type="button" class="btn btn-success"><i class="fa fa-plus">
+                                        </i>Add
+                                    </button>
+                                @endcan
                             </form>
                         </div>
                         <div class="box-body">
@@ -149,7 +151,33 @@
     <script type="text/javascript">
         $(function() {
             areaTree.init();
-            lineOpt.init('1', '1', '1');
+            // lineOpt.init('1', '1', '1');
         });
     </script>
+    @if (auth()->user()->can('updateView', App\Models\Route::class) &&
+        auth()->user()->can('deleteView', App\Models\Route::class))
+        <script>
+            $(document).ready(function() {
+                $(function() {
+                    lineOpt.init('1', '1', '1');;
+                });
+            });
+        </script>
+    @elseif(auth()->user()->can('updateView', App\Models\Route::class))
+        <script>
+            $(document).ready(function() {
+                $(function() {
+                    lineOpt.init('1', '1', '1');
+                });
+            });
+        </script>
+    @elseif(auth()->user()->can('deleteView', App\Models\Route::class))
+        <script>
+            $(document).ready(function() {
+                $(function() {
+                    lineOpt.init('1', '', '1');
+                });
+            });
+        </script>
+    @endif
 @endpush

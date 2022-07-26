@@ -71,6 +71,7 @@ var areaTree = {
         $("html").unbind("mousedown", areaTree.onHtmlDownForQuery);
     },
 };
+
 function onQueryAreaTreeCheck() {
     var nodes = areaTree.queryTree.getCheckedNodes(true);
     var v = "";
@@ -103,6 +104,7 @@ function onOptAreaTreeCheck() {
         );
     }
 }
+
 var deviceOpt = {
     queryParams: {},
     privilege: { update: false, add: false },
@@ -173,12 +175,12 @@ var deviceOpt = {
                     title: language.device.addCheckpoint.name,
                     sortable: true,
                     formatter: function (value, row, index) {
-                        if (row.mode == "collect record") {
-                            return language.device.addCheckpoint.checkpoint;
-                        } else if (row.mode == "collect checkpoint") {
-                            return language.device.addCheckpoint.patrolman;
-                        } else {
+                        if (row.mode == 0) {
                             return language.device.addCheckpoint.normal;
+                        } else if (row.mode == 1) {
+                            return language.device.addCheckpoint.checkpoint;
+                        } else {
+                            return language.device.addCheckpoint.patrolman;
                         }
                     },
                 },
@@ -187,7 +189,7 @@ var deviceOpt = {
                     title: language.common.area,
                     sortable: true,
                     formatter: function (value, row, index) {
-                        return row.organization;
+                        return row.organizationName;
                     },
                 },
                 {
@@ -202,11 +204,11 @@ var deviceOpt = {
                     field: "lastReadTime",
                     title: language.device.lastReadTime,
                     formatter: function (value, row, index) {
-                        if (row.last_scanTime) {
+                        if (row.lastReadTime) {
                             var now = new Date();
                             now.setMonth(now.getMonth() - 3);
                             // return row.last_scanTime;
-                            if (row.last_scanTime <= now.getTime()) {
+                            if (row.lastReadTime <= now.getTime()) {
                                 return (
                                     "<label class='label label-danger'>" +
                                     new Date(row.last_scanTime).Format(
@@ -311,6 +313,7 @@ var deviceOpt = {
     updateUI: function (row) {
         deviceOpt.optType = 1;
         $("#modal-device .modal-title").html(language.device.modifyReader);
+        $("#device_number").attr("disabled", true);
         formOpt.id.value = row.id;
         formOpt.name.value = row.name;
         formOpt.device_number.value = row.device_number;
@@ -472,7 +475,7 @@ var deviceOpt = {
                 if (data.success) {
                     deviceOpt.$deviceTable.bootstrapTable("refresh");
                     $("#modal-device").modal("hide");
-                    toastr.success(language.common.tip.updated);
+                    toastr.success(language.common.tip.added);
                 }
             },
             error(xml, status, err) {
@@ -551,6 +554,7 @@ window.operateEvents = {
         deviceOpt.updateUI(row);
     },
     "click .setting": function (e, value, row, index) {
+        console.log(row);
         deviceOpt.settingUI(row);
     },
     "click .refresh-setting": function (e, value, row, index) {

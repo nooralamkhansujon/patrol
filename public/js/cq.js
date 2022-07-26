@@ -1,12 +1,12 @@
 Date.prototype.Format = function (fmt) {
     var o = {
-        "M+": this.getMonth() + 1, //æœˆä»½
-        "d+": this.getDate(), //æ—¥
-        "H+": this.getHours(), //å°æ—¶
-        "m+": this.getMinutes(), //åˆ†
-        "s+": this.getSeconds(), //ç§’
-        "q+": Math.floor((this.getMonth() + 3) / 3), //å­£åº¦
-        S: this.getMilliseconds(), //æ¯«ç§’
+        "M+": this.getMonth() + 1,
+        "d+": this.getDate(),
+        "H+": this.getHours(),
+        "m+": this.getMinutes(),
+        "s+": this.getSeconds(),
+        "q+": Math.floor((this.getMonth() + 3) / 3),
+        S: this.getMilliseconds(),
     };
     if (/(y+)/.test(fmt))
         fmt = fmt.replace(

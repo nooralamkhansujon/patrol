@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\DeviceActiveResource;
 use App\Http\Resources\DeviceActivityResource;
 use App\Http\Resources\DeviceResource;
 use App\Models\Device;
+use App\Models\DeviceActivity;
 use App\Models\DeviceRoute;
 use App\Models\DeviceSetting;
+use App\Models\Route;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -14,8 +17,12 @@ use Illuminate\Support\Facades\DB;
 class DeviceController extends Controller
 {
     public function index(){
-        // $devices = Device::all();
-        return view('patrol_managements.devices.index');
+        if(auth()->user()->type === 'super_admin'){
+            $routes = Route::all();
+        }else{
+            $routes = Route::where('organization_id',auth()->user()->organization_id)->get();
+        }
+        return view('patrol_managements.devices.index',compact('routes'));
     }
 
     public function deviecSetting(Request $request)
@@ -70,12 +77,23 @@ class DeviceController extends Controller
     }
 
     public function getDevices(Request $request){
-        $total = Device::count();
+        if(auth()->user()->type === 'super_admin'){
+            $total     = Device::count();
+        }else{
+            $total     = Device::where('organization_id',auth()->user()->organization_id)->count();
+        }
         $limit = $request->limit;
         $totalPage = (int) ceil($total/$limit);
         $offset    = $request->offset;
         $pageNum   = $offset == 0 ?1:$limit/$offset+1;
-        $devices   = Device::with(['owner','organization','deviceActivities','deviceLines'])->skip($request->offset)->take($limit)->orderBy('id',$request->input('order'))->get();
+
+        if(auth()->user()->type === 'super_admin'){
+            $devices  = Device::with(['organization','owner','deviceSetting','deviceActivities','deviceLines'])->skip($request->offset)->take($limit)->orderBy('id',$request->input('order'))->get();
+        }else{
+            $devices     = Device::with(['organization','owner','deviceSetting','deviceActivities','deviceLines'])->skip($request->offset)->take($limit)->where([
+                ['organization_id','=',auth()->user()->organization_id],
+              ])->orderBy('id',$request->input('order'))->get();
+        }
         $devices   = DeviceResource::collection($devices);
         return response()->json(['rows'=>$devices,'pageNum'=>$pageNum,'pageSize'=>$limit,'total'=>$total,'totalPage'=>$totalPage]);
     }
@@ -114,7 +132,7 @@ class DeviceController extends Controller
         $request->validate([
             'id'       => "required",
             'name'     => "required",
-            'device_number'     => "required|unique:devices,device_number,".$request->input('id'),
+            // 'device_number'     => "required|unique:devices,device_number,".$request->input('id'),
             'addCheckpoint'              => "required",
             'areaId'   => 'required',
             // 'owner'          => 'required',
@@ -132,7 +150,7 @@ class DeviceController extends Controller
          try{
             $data = array(
                 'name'          =>  $request->input('name'),
-                'device_number' =>  $request->input('device_number'),
+                // 'device_number' =>  $request->input('device_number'),
                 'organization_id'   =>  $request->input('areaId'),
                 'mode'        =>  $request->input('addCheckpoint'),
                 'description' => $request->has('description') && $request->input('description') ?  $request->input('description'):"",

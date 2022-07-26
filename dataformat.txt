@@ -79,3 +79,24 @@
     'checkpoint_id' => '1603624529',
   ),
 )
+
+
+areaName: "Thakurgaon Feedmill"
+checkpoint: {id: 1859,
+name: "Cilo Backside,TFM",
+ card: "6C00852B11",
+  reCard: "6C00852B11",
+   type: 0, areaId: 376
+}
+checkpointId: 1859
+createTime: 1656702787000
+customerId: 46
+device: {id: 420, name: "Thakurgaon Feedmill", code: "20362284", reCode: "20362284", delFlag: 0, areaId: 376,…}
+deviceId: 420
+eventLogs: []
+gmtCreate: 1656702792289
+gmtModified: 1656702792289
+id: 2928705
+patrolmanId: null
+patrolmanName: null
+uuid: null

@@ -15,7 +15,6 @@
         #formOpt-roleIds {
             width: 250px !important;
         }
-
     </style>
 @endsection
 

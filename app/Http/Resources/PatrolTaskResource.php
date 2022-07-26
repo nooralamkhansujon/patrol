@@ -14,6 +14,28 @@ class PatrolTaskResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            "areaName" => $this->route?->organization->name,
+            "building" => $this->building,
+            "cycle"    => $this->cycle,
+            "dayPlanTimeData" =>PlanTimeResource::collection($this->planTimes),
+            "endDate"   =>  $this->endDate,
+            "fri"       => $this->fri,
+            "id"        =>  $this->id,
+            "route_id"  =>  $this->route_id,
+            "lineName"  =>  $this->route?->name,
+            "lineId"  =>  $this->route?->id,
+            "mon"       => $this->mon,
+            "name"      => $this->name,
+            "planTimes" =>PlanTimeResource::collection($this->planTimes),
+            "reCreate"  => $this->reCreate,
+            "sat"       => $this->sat,
+            "startDate" => $this->startDate,
+            "sun"       => $this->sun,
+            "thu"       => $this->thu,
+            "tue"       => $this->tue,
+            "type"      => $this->type,
+            "wed"       => $this->wed
+        ];
     }
 }

@@ -33,6 +33,14 @@ class PatrolTask extends Model
         'type',
         'wed','thu','reCreate'
     ];
+
+    public function planTimes(){
+        return $this->hasMany(PlanTime::class,'task_id','id');
+    }
+
+    public function route(){
+        return $this->belongsTo(Route::class,'route_id','id');
+    }
 }
 
 

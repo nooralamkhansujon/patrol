@@ -10,23 +10,38 @@ use Illuminate\Http\Request;
 class RouteController extends Controller
 {
     public function index(){
+        $this->authorize('viewany',Route::class);
         return view('patrol_managements.routes.index');
     }
 
     public function getRoutes(Request $request)
     {
-        $total = Route::count();
         $limit = $request->limit;
+        if(auth()->user()->type === 'super_admin'){
+            $total     = Route::count();
+        }else{
+            $total     = Route::where('organization_id',auth()->user()->organization_id)->count();
+        }
         $totalPage = (int) ceil($total/$limit);
         $offset  = $request->offset;
         $pageNum = $offset == 0 ?1:$limit/$offset+1;
-        $routes  = Route::skip($request->offset)->take($limit)->orderBy('id',$request->input('order'))->get();
+        if(auth()->user()->type === 'super_admin'){
+            $routes  = Route::skip($request->offset)->take($limit)->orderBy('id',$request->input('order'))->get();
+        }else{
+            $routes     = Route::skip($request->offset)->take($limit)->where([
+                ['organization_id','=',auth()->user()->organization_id],
+              ])->orderBy('id',$request->input('order'))->get();
+        }
         $routes = RouteResource::collection($routes);
         return response()->json(['rows'=>$routes,'pageNum'=>$pageNum,'pageSize'=>$limit,'total'=>$total,'totalPage'=>$totalPage]);
     }
 
     public function store(Request $request)
     {
+
+        if(!auth()->user()->can('create',App\Models\Route::class)){
+            return response()->json(['message','UnAuthorized '],403);
+        }
         $request->validate([
             'name'     => "required",
             'areaId'   => 'required',
@@ -56,6 +71,11 @@ class RouteController extends Controller
         if (!$route) {
             return response()->json(['error'=>'Route not found'],404);
         }
+
+        if(!auth()->user()->can('update',$route)){
+            return response()->json(['message','UnAuthorized '],403);
+        }
+
         $request->validate([
             'id'     => "required",
             'name'   => "required",
@@ -82,6 +102,10 @@ class RouteController extends Controller
         if (!$route) {
             return response()->json(['error'=>'Route not found'],404);
         }
+        if(!auth()->user()->can('delete',$route)){
+            return response()->json(['message','UnAuthorized '],403);
+        }
+
         try {
             $route->delete();
             return response()->json(['success'=>'Route has been Deleted Successfully']);

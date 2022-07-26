@@ -16,6 +16,14 @@
             width: 250px !important;
         }
 
+        #s-line {
+            /* position: relative !important; */
+            z-index: 1070 !important;
+        }
+
+        #modal-setting {
+            z-index: 1051 !important;
+        }
     </style>
 @endsection
 
@@ -28,10 +36,14 @@
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
                     <li class="breadcrumb-item">
-                        <a href="{{ route('home') }}"><i class="fa fa-home"></i></a>
+                        <a href="{{ route('home') }}">
+                            <i class="fa fa-home"></i>
+                        </a>
                     </li>
                     <li class="breadcrumb-item">
-                        <a href="{{ route('organizations.index') }}">Patrol Management</a>
+                        <a href="{{ route('organizations.index') }}">
+                            Patrol Management
+                        </a>
                     </li>
                     <li class="breadcrumb-item active" aria-current="page">Devices</li>
                 </ol>
@@ -127,7 +139,8 @@
                                 <div class="form-group">
                                     <label class="control-label col-md-4">Owner</label>
                                     <div class="col-md-8">
-                                        <select id="formOpt-patrolmanId" class="form-control" name="patrolmanId"></select>
+                                        <select id="formOpt-patrolmanId" class="form-control"
+                                            name="patrolmanId"></select>
                                     </div>
                                 </div>
                             </form>
@@ -169,82 +182,13 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-xs-3">Route</label>
-                                    <div class="col-xs-9">
+                                    <label class="control-label col-sm-3">Route</label>
+                                    <div class="col-sm-9">
                                         <select id="s-line" class="form-control" name="lineIds" multiple
                                             style="width: 100%;">
-                                            <option value="179">Route_KDF-Dhemshimary</option>
-                                            <option value="180">Route_NBEL-Katapara</option>
-                                            <option value="181">Route_KBL-Sarkarpara</option>
-                                            <option value="182">Route_KHL-Habibpur</option>
-                                            <option value="183">Route_THL_1-Taragonj</option>
-                                            <option value="184">Route_PLF-Pirgonj</option>
-                                            <option value="185">Route_GF-Ghonirampur</option>
-                                            <option value="186">Route_THL_3-Shurongeerbazar</option>
-                                            <option value="187">Route_GFL-Gongachara</option>
-                                            <option value="188">Route_APL-Ganjabari</option>
-                                            <option value="194">Route_GP-Atargaon</option>
-                                            <option value="200">Route_KFG-HeadOffice</option>
-                                            <option value="227">Route_Thakurgaon Feedmill</option>
-                                            <option value="228">Route_Panchagar Feedmill</option>
-                                            <option value="230">Route_SPL-Moniramjot</option>
-                                            <option value="235">Route_Srabon Poultry</option>
-                                            <option value="312">nasir uddin</option>
-                                            <option value="313">Route_Kazi Chicken Nalkura</option>
-                                            <option value="315">Route_Jaldhaka Farms</option>
-                                            <option value="316">Route_Nandigram Farms</option>
-                                            <option value="318">Route_KGPL-Srikrishnapur</option>
-                                            <option value="319">Route_Kazi Eggs-Chaklarhat</option>
-                                            <option value="320">Route_Kazi Jhaljhali Farm</option>
-                                            <option value="321">Route_RBCL-Akhanogor</option>
-                                            <option value="322">Route_KGPL-Choprabari</option>
-                                            <option value="323">Route_APL-Mirzapur</option>
-                                            <option value="324">Route_Hybrid Farm</option>
-                                            <option value="332">Route_Kazi Breeders_Yakubpur</option>
-                                            <option value="333">Route_Kajol Dhigi Farm_Zalingi</option>
-                                            <option value="338">Route_KGPL-Boirampur_Thakurgao</option>
-                                            <option value="339">Route_Uttara Kazi Compost_Panchagarh</option>
-                                            <option value="340">Route_Tetulia Eggs_Katapara</option>
-                                            <option value="341">Route_Bhaluka Farms_Sarkarpara</option>
-                                            <option value="342">Route_Kazi Foods_Sarkarpara</option>
-                                            <option value="343">Route_Birol Poultry_Dinajpur</option>
-                                            <option value="344">Route_Kazi Raigonj Farms</option>
-                                            <option value="345">Route_Kazi Nilphamari Farms</option>
-                                            <option value="364">Route_Batikmari Hatchery</option>
-                                            <option value="389">Route_Gopalgonj Hatchery</option>
-                                            <option value="393">Route_ Jaldhaka Compost Plant</option>
-                                            <option value="394">Route_Gongachora Compost Plant</option>
-                                            <option value="395">Route_ Shurongeer Bazer Compost Plant</option>
-                                            <option value="396">Route_ Raigonj Compost Plant</option>
-                                            <option value="397">Route_Nandigram Compost Plant</option>
-                                            <option value="402">Route_Scrap and Spray Center Khocubari</option>
-                                            <option value="407">Route_Gozaria Feed Mill</option>
-                                            <option value="413">Route_Elite Force_India</option>
-                                            <option value="414">Route_Elite Force_Thai</option>
-                                            <option value="415">Route_Elite Force_philipine</option>
-                                            <option value="416">Route_Elite Force_Maldives</option>
-                                            <option value="423">Route_Elite Force_Brazil</option>
-                                            <option value="424">Route_Elite Force_UAE</option>
-                                            <option value="425">Route_Elite Force_Brunei Darussalam</option>
-                                            <option value="426">Route_Elite Force_Turkish</option>
-                                            <option value="427">Route_Elite Force_Qatar</option>
-                                            <option value="428">Route_Elite Force_European</option>
-                                            <option value="429">Route_Elite Force_Singapore</option>
-                                            <option value="430">Route_Elite Force_Iraq</option>
-                                            <option value="434">Route_Sagorika Feeds</option>
-                                            <option value="438">ROUTE 1</option>
-                                            <option value="439">ROUTE 2</option>
-                                            <option value="446">Route_Noakhali Hatchery</option>
-                                            <option value="493">Route_Sirajgonj Hatchery</option>
-                                            <option value="495">Route-1</option>
-                                            <option value="509">Route_Srimongal Hatchery</option>
-                                            <option value="512">Route_Barishal Hatchery</option>
-                                            <option value="586">Route_Rafid Poultry </option>
-                                            <option value="595">Kajol Dhigi Farm</option>
-                                            <option value="598">Route_Dhemshimary Compost Plant</option>
-                                            <option value="631">Route_Shibpur Hatchery</option>
-                                            <option value="632">Route_Zaman_Fashion</option>
-                                            <option value="633">Route_Rashik GP Hatchery </option>
+                                            @foreach ($routes as $route)
+                                                <option value="{{ $route->id }}">{{ $route->name }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>
@@ -289,7 +233,7 @@
     <script type="text/javascript">
         $(function() {
             areaTree.init();
-            deviceOpt.init('1');
+            deviceOpt.init('1', '1');
         });
     </script>
 @endpush

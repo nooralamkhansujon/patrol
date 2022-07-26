@@ -9,21 +9,45 @@ use App\Models\PlanTime;
 use App\Models\Route;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use  App\Helpers\PatrolTaskHelper;
+use App\Http\Resources\RouteResource;
 
 class PatrolTaskController extends Controller
 {
     public function index(){
-        $patrolTasks = PatrolTask::all();
+        $this->authorize('viewany',User::class);
+        if(auth()->user()->type === 'super_admin'){
+            $patrolTasks = PatrolTask::all();
+        }else{
+            $organization_id = auth()->user()->organization_id;
+            $routes = Route::where('organization_id',$organization_id)->pluck('id');
+            $patrolTasks = PatrolTask::whereIn('route_id',$routes)->get();
+        }
         return view('patrol_managements.patrol_task.index',compact('patrolTasks'));
     }
     public function getPatrolTask(Request $request)
     {
-        $total = PatrolTask::count();
-        $limit = $request->limit;
+        $limit     = $request->limit;
+        if(auth()->user()->type === 'super_admin'){
+            $total     = PatrolTask::count();
+        }else{
+            $organization_id = auth()->user()->organization_id;
+            $routes = Route::where('organization_id',$organization_id)->pluck('id');
+            $total = PatrolTask::whereIn('route_id',$routes)->count();
+        }
         $totalPage = (int) ceil($total/$limit);
         $offset = $request->offset;
         $pageNum = $offset == 0 ?1:$limit/$offset+1;
-        $patrolsTasks = PatrolTask::skip($request->offset)->take($limit)->orderBy('id',$request->input('order'))->get();
+        if(auth()->user()->type === 'super_admin'){
+            $patrolsTasks     = PatrolTask::skip($request->offset)->take($limit)->where([
+            ['type','<>','super_admin']])->orderBy('id',$request->input('order'))->get();
+        }else{
+            $organization_id = auth()->user()->organization_id;
+            $routes = Route::where('organization_id',$organization_id)->pluck('id');
+            $patrolsTasks     = PatrolTask::skip($request->offset)->take($limit)->whereIn('route_id',$routes)->orderBy('id',$request->input('order'))->get();
+        }
+
         $patrolsTasks = PatrolTaskResource::collection($patrolsTasks);
         // $users = User::all();
         return response()->json(['rows'=>$patrolsTasks,'pageNum'=>$pageNum,'pageSize'=>$limit,'total'=>$total,'totalPage'=>$totalPage]);
@@ -31,7 +55,11 @@ class PatrolTaskController extends Controller
 
     public function routeLineTree(Request $request){
         // $lineTree = Route::with('organizations')->get();
-        $organizationRoutes = Organization::with('routes')->get();
+        if(auth()->user()->type === 'super_admin'){
+            $organizationRoutes = Organization::with('routes')->get();
+        }else{
+            $organizationRoutes = Organization::with('routes')->where('id',auth()->user()->organization_id)->get();
+        }
         //now I have to bind as array
         $lineTrees = collect([]);
         foreach($organizationRoutes as $organization){
@@ -73,25 +101,43 @@ class PatrolTaskController extends Controller
         }
         return response()->json(compact('lineTrees'));
     }
-
-    public function listByAreaId(Request $request)
+    public function getRoutes(Request $request)
     {
-        $patrolmans = PatrolTask::where('organization_id',$request->areaId)->get();
-        if($patrolmans->count() == 0){
-            return response()->json(['error'=>"Patrolman are not exist in this organization"]);
+        $limit = $request->limit;
+        $limit     = $request->limit;
+        if(auth()->user()->type === 'super_admin'){
+            $total     = Route::count();
+        }else{
+            $total     = Route::where('organization_id',auth()->user()->organization_id)->count();
         }
-        return response()->json($patrolmans);
+        $totalPage = (int) ceil($total/$limit);
+        $offset  = $request->offset;
+        $pageNum = $offset == 0 ?1:$limit/$offset+1;
+        if(auth()->user()->type === 'super_admin'){
+            $routes  = Route::skip($request->offset)->take($limit)->get();
+        }else{
+            $routes     = Route::skip($request->offset)->take($limit)->where([
+                ['organization_id','=',auth()->user()->organization_id],
+              ])->get();
+        }
+        $routes = RouteResource::collection($routes);
+        return response()->json(['rows'=>$routes,'pageNum'=>$pageNum,'pageSize'=>$limit,'total'=>$total,'totalPage'=>$totalPage]);
     }
+    // public function listByAreaId(Request $request)
+    // {
+    //     $patrolmans = PatrolTask::where('organization_id',$request->areaId)->get();
+    //     if($patrolmans->count() == 0){
+    //         return response()->json(['error'=>"Patrolman are not exist in this organization"]);
+    //     }
+    //     return response()->json($patrolmans);
+    // }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name' =>"required",
-            'code_number' => 'required',
-            'areaId'   => 'required',
-            'description'   => 'required'
-        ]);
-
+        if(!auth()->user()->can('create',PatrolTask::class)){
+            return response()->json(['message','UnAuthorized '],403);
+        }
+        // return $request->all();
         //for cycle data
         //  name: krc routes task
         // lineId: 3
@@ -139,7 +185,9 @@ class PatrolTaskController extends Controller
 
         //store organization;
         try{
+            info(gettype($request->input('type')));
             if($request->input('type') == 0 ){
+                info('I am running from 0');
                 $request->validate([
                    'name' =>'required',
                    'lineId' =>'required',
@@ -153,32 +201,28 @@ class PatrolTaskController extends Controller
                     'sun' =>'required',
                     'dayPlanTimeData' => 'required',
                 ]);
-                $data = array(
-                    'name' => $request->input('name'),
-                    'route_id' => $request->input('lineId'),
-                    'start_date' => $request->input('name'),
-                    'end_date' => $request->input('end_date') ? $request->input('end_date'):null,
-                    'tue' => $request->input('tue'),
-                    'wed' => $request->input('wed'),
-                    'thu' => $request->input('thu'),
-                    'fri' => $request->input('fri'),
-                    'sat' => $request->input('sat'),
-                    'sun' => $request->input('sun'),
-                );
-                $patrolTask = PatrolTask::create($data);
-                foreach($request->input('dayPlanTimeData') as $planTime){
-                    $planData = array(
-                        'task_id'   => $patrolTask->id,
-                        'start_time'   => $planTime->startTime,
-                         'end_time'   => $patrolTask->endTime,
-                    );
-                    $plan = PlanTime::create($planData);
+                $response = PatrolTaskHelper::storeTaskDaily($request);
+                if($response['error']){
+                    return response(['error'=>$response['message']],500);
                 }
             }
-            PatrolTask::create($data);
+
+            elseif($request->input('type') == 2 || $request->input('type') == 1){
+              $response = PatrolTaskHelper::taskMonthlyOrWeekly($request);
+              if($response['error']){
+                return response(['error'=>$response['message']],500);
+            }
+            }
+
+            elseif($request->input('type') == 3){
+                //for weekly task
+                $response = PatrolTaskHelper::taskCycle($request);
+                if($response['error']){
+                    return response(['error'=>$response['message']],500);
+                }
+            }
             return response()->json(['success'=>'PatrolTask has been created Successfully']);
         }catch(Exception $e){
-            // $this->error($e->getMessage());
             return response()->json(['error'=>$e->getMessage()],500);
         }
     }
@@ -194,6 +238,9 @@ class PatrolTaskController extends Controller
         $patrolTask = PatrolTask::find($request->id);
         if (!$patrolTask) {
             return response()->json(['error'=>'Patrol Task not found'],404);
+        }
+        if(!auth()->user()->can('update',$patrolTask)){
+            return response()->json(['message','UnAuthorized '],403);
         }
 
          //store organization;
@@ -217,6 +264,9 @@ class PatrolTaskController extends Controller
         $patrolTask = PatrolTask::find($request->id);
         if(!$patrolTask){
             return response()->json(['error'=>'PatrolTask not found'],404);
+        }
+        if(!auth()->user()->can('delete',$patrolTask)){
+            return response()->json(['message','UnAuthorized '],403);
         }
         try{
           $patrolTask->delete();

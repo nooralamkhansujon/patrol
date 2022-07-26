@@ -13,20 +13,39 @@ class AccountsController extends Controller
 {
     public function index()
     {
+        $this->authorize('viewany',User::class);
         $roles = Role::all();
+        if(auth()->user()->type === 'super_admin'){
+            $roles = Role::latest()->get();
+        }else{
+            $roles =  auth()->user()->roles;
+        }
         return view('organizations.accounts.index', compact('roles'));
     }
 
     public function getAccounts(Request $request)
     {
-        $total = User::count();
-        $limit = $request->limit;
+        $limit     = $request->limit;
+        if(auth()->user()->type === 'super_admin'){
+            $total     = User::count();
+        }else{
+            $total     = User::where('organization_id',auth()->user()->organization_id)->count();
+        }
         $totalPage = (int) ceil($total/$limit);
-        $offset = $request->offset;
-        $pageNum = $offset == 0 ?1:$limit/$offset+1;
-        $users = User::skip($request->offset)->take($limit)->where([
-        ['type','<>','super_admin']
-        ])->orderBy('id',$request->input('order'))->get();
+
+        $offset    = $request->offset;
+        $pageNum   = $offset == 0 ?1:$limit/$offset+1;
+        if(auth()->user()->type === 'super_admin'){
+            $users     = User::with(['roles','organization'])->skip($request->offset)->take($limit)->where([
+               ['type','<>','super_admin']
+            ])->orderBy('id',$request->input('order'))->get();
+        }
+        else{
+            $users     = User::with(['roles','organization'])->skip($request->offset)->take($limit)->where([
+              ['type','<>','super_admin'],
+              ['organization_id','=',auth()->user()->organization_id],
+            ])->orderBy('id',$request->input('order'))->get();
+        }
         $users = UserResource::collection($users);
         // $users = User::all();
         return response()->json(['rows'=>$users,'pageNum'=>$pageNum,'pageSize'=>$limit,'total'=>$total,'totalPage'=>$totalPage]);
@@ -34,6 +53,10 @@ class AccountsController extends Controller
 
     public function store(Request $request)
     {
+
+        if(!auth()->user()->can('create',User::class)){
+            return response()->json(['message','UnAuthorized '],403);
+        }
         $request->validate([
             'name'     => "required",
             'email'     => "required",
@@ -75,6 +98,11 @@ class AccountsController extends Controller
         if (!$user) {
             return response()->json(['error'=>'user not found'],404);
         }
+        if(!auth()->user()->can('update',$user)){
+            return response()->json(['message','UnAuthorized '],403);
+        }
+
+
         $request->validate([
             'id'       => 'required',
             'name'     => "required",
@@ -117,6 +145,10 @@ class AccountsController extends Controller
         if (!$user) {
             return response()->json(['error'=>'user not found'],404);
         }
+        if(!auth()->user()->can('delete',$user)){
+            return response()->json(['message','UnAuthorized '],403);
+        }
+
         try {
             $user->roles()->detach();
             $user->delete();

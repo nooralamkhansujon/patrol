@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Device extends Model
 {
     use HasFactory;
-    protected $fillable=['name','device_number','mode','organization_id','patrolman_id','description'];//mode = addcheckpoint
+    protected $fillable=['name','device_number','mode','organization_id','patrolman_id','description','last_scan_time','ele','model'];//mode = addcheckpoint,model=2,3
 
     public function organization(){
         return $this->belongsTo(Organization::class,'organization_id','id');

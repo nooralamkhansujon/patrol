@@ -13,23 +13,22 @@ use Psy\VersionUpdater\Checker;
 class RouteCheckpointController extends Controller
 {
     public function index($route_id){
-        // dd($route_id);
         $route = Route::find((int)$route_id);
         if(!$route){
             return response()->json(['error'=>'Route not found'],404);
         }
-        // $route_checkpoints = RouteCheckpoint::where([
-        //     ['route_id','=',$route_id],
-        // ])->get();
+        if(!auth()->user()->can('view',$route)){
+            return response()->json(['message','UnAuthorized '],403);
+        }
+        $this->authorize('view',$route);
         return view('patrol_managements.routes.route_checkpoints',compact('route'));
     }
 
     public function listByLineNotExist(){
         $route = Route::with('CheckPoints')->find(request()->lineId);
         $checkpointIds = $route->CheckPoints->pluck('checkpoint_id');
-        // dd($checkpointIds);
+
         $checkPoints = CheckPoint::where([['organization_id','=',$route->organization_id]])->whereNotIn('id',$checkpointIds)->get();
-        // dd($checkPoints);
         return response()->json($checkPoints);
     }
 
