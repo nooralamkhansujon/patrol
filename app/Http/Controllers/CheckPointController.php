@@ -49,7 +49,7 @@ class CheckPointController extends Controller
             'name'           => "required",
             'code_number'    => "required",
             'areaId'         => 'required',
-            'description'    => 'required',
+            // 'description'    => 'required',
         ]);
         //store organization;
         try {
@@ -58,7 +58,7 @@ class CheckPointController extends Controller
                 'name'             => $request->input('name'),
                 'code_number'      => $request->input('code_number'),
                 'organization_id'  => $request->input('areaId'),
-                'description'      => $request->input('description'),
+                'description'      => $request->input('description') ?? "",
                 'creation_time'  =>  now()
             );
             $checkpoint  = CheckPoint::create($data);
@@ -84,7 +84,7 @@ class CheckPointController extends Controller
             'name'     => "required",
             'code_number'    => "required",
             'areaId'   => 'required',
-            'description'     => 'required',
+            // 'description'     => 'required',
         ]);
 
         //store organization;
@@ -95,7 +95,7 @@ class CheckPointController extends Controller
                 'name'             => $request->input('name'),
                 'code_number'      => $request->input('code_number'),
                 'organization_id'  => $request->input('areaId'),
-                'description'      => $request->input('description'),
+                'description'      => $request->input('description') ?? "",
                 'creation_time'  =>  now()
             );
             $checkpoint->update($data);

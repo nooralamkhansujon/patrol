@@ -708,7 +708,7 @@ var planOpt = {
                         "<div class='col-xs-offset-2 col-xs-8'><table class='table table-bordered table-condensed'><tr><td>" +
                         language.common.cycle +
                         "</td></tr><tr><td>" +
-                        language.common.everyMonth +
+                        language.plan.tip.everyMonth +
                         "</td></tr></table></div>"
                     );
                 } else if (row.type == 3) {
@@ -716,9 +716,9 @@ var planOpt = {
                         "<div class='col-xs-offset-2 col-xs-8'><table class='table table-bordered table-condensed'><tr><td>" +
                         language.common.cycle +
                         "</td></tr><tr><td>" +
-                        language.common.every +
+                        language.plan.tip.every +
                         row.cycle +
-                        language.common.everyDay +
+                        language.plan.tip.everyDay +
                         "</td></tr></table></div>"
                     );
                 }
@@ -986,7 +986,7 @@ var planOpt = {
         }
         MaskUtil.mask(language.common.tip.updating);
         $.post("../patrol_task/update", data, function (data) {
-            if (data.result) {
+            if (data.success) {
                 planOpt.refresh();
                 $("#modal-plan-day").modal("hide");
                 toastr.success(language.common.tip.updated);
@@ -1058,14 +1058,17 @@ var planOpt = {
             url: planOpt.url.add,
             data: data,
             success: function (data) {
-                if (data.result) {
+                console.log(data);
+                console.log('from cycle');
+                if (data.success) {
                     planOpt.refresh();
                     $("#modal-plan").modal("hide");
                     toastr.success(language.common.tip.added);
-                } else if (data["errorMsg"]) {
-                    toastr.error(data["errorMsg"]);
-                }
+                } 
             },
+            error(xhr,status,error){
+                toastr.error(error.error);
+            }
         });
     },
     updateUI: function (row) {
@@ -1162,8 +1165,10 @@ var planOpt = {
                 } else {
                     formPlan.endDate.value = "";
                 }
-                formPlan.startDate.value = row.startDate;
-                formPlan.endDate.value = row.endDate;
+                console.log(row);
+                console.log('running from update cycle')
+                // formPlan.startDate.value = row.startDate;
+                // formPlan.endDate.value = row.endDate;
                 formPlan.cycle.value = row.cycle;
                 $("#modal-plan")
                     .find(".modal-title")
@@ -1184,7 +1189,7 @@ var planOpt = {
             url: planOpt.url.update,
             data: data,
             success: function (data) {
-                if (data.result) {
+                if (data.success) {
                     planOpt.refresh();
                     toastr.success(language.common.tip.updated);
                     $("#modal-plan").modal("hide");

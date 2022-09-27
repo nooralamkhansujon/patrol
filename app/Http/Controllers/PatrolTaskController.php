@@ -185,20 +185,20 @@ class PatrolTaskController extends Controller
 
         //store organization;
         try{
-            info(gettype($request->input('type')));
+
             if($request->input('type') == 0 ){
                 info('I am running from 0');
                 $request->validate([
-                   'name' =>'required',
-                   'lineId' =>'required',
-                    'startDate' =>'required',
-                    'mon' =>'required',
-                    'tue' =>'required',
-                    'wed' =>'required',
-                    'thu' =>'required',
-                    'fri' =>'required',
-                    'sat' =>'required',
-                    'sun' =>'required',
+                    'name'       =>  'required',
+                    'lineId'     => 'required',
+                    'startDate'  => 'required',
+                    'mon'        => 'required',
+                    'tue'       => 'required',
+                    'wed'       =>  'required',
+                    'thu'       => 'required',
+                    'fri'       => 'required',
+                    'sat'       => 'required',
+                    'sun'       => 'required',
                     'dayPlanTimeData' => 'required',
                 ]);
                 $response = PatrolTaskHelper::storeTaskDaily($request);
@@ -228,13 +228,7 @@ class PatrolTaskController extends Controller
     }
 
     public function update(Request $request){
-        $request->validate([
-            'id'          => 'required',
-            'name'        => "required",
-            'code_number' => 'required',
-            'areaId'      => 'required',
-            'description' => 'required'
-        ]);
+
         $patrolTask = PatrolTask::find($request->id);
         if (!$patrolTask) {
             return response()->json(['error'=>'Patrol Task not found'],404);
@@ -245,16 +239,44 @@ class PatrolTaskController extends Controller
 
          //store organization;
          try{
-             $data=array(
-                'name'          => $request->input('name'),
-                'code_number'   => $request->input('code_number'),
-                'organization_id' => $request->input('areaId'),
-                'description'   => $request->input('description'),
-             );
-            $patrolTask->update($data);
-            return response()->json(['success'=>'PatrolTask has been updated successfully']);
+
+            if($request->input('type') == 0 ){
+                $request->validate([
+                    'name'       =>  'required',
+                    'lineId'     => 'required',
+                    'startDate'  => 'required',
+                    'mon'        => 'required',
+                    'tue'       => 'required',
+                    'wed'       =>  'required',
+                    'thu'       => 'required',
+                    'fri'       => 'required',
+                    'sat'       => 'required',
+                    'sun'       => 'required',
+                    'dayPlanTimeData' => 'required',
+                ]);
+                $response = PatrolTaskHelper::updateTaskDaily($patrolTask,$request);
+                if($response['error']){
+                    return response(['error'=>$response['message']],500);
+                }
+            }
+
+            elseif($request->input('type') == 2 || $request->input('type') == 1){
+              $response = PatrolTaskHelper::updateTaskMonthlyOrWeekly($patrolTask,$request);
+              if($response['error']){
+                return response(['error'=>$response['message']],500);
+            }
+            }
+
+            elseif($request->input('type') == 3){
+                //for weekly task
+                $response = PatrolTaskHelper::updateTaskCycle($patrolTask,$request);
+                if($response['error']){
+                    return response(['error'=>$response['message']],500);
+                }
+            }
+            return response()->json(['success'=>'PatrolTask has been updated Successfully']);
         }catch(Exception $e){
-            return response()->json(['success'=>$e->getMessage()],500);
+            return response()->json(['error'=>$e->getMessage()],500);
         }
 
     }
@@ -269,6 +291,9 @@ class PatrolTaskController extends Controller
             return response()->json(['message','UnAuthorized '],403);
         }
         try{
+          if($patrolTask->planTimes->count()){
+            $patrolTask->planTimes()->delete();
+          }
           $patrolTask->delete();
           return response()->json(['success'=>"PatrolTask Deleted Successfully"]);
         }catch(Exception $e){

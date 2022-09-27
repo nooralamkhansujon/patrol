@@ -19,8 +19,8 @@ return new class extends Migration
             ->constrained('patrol_tasks')
             ->onUpdate('cascade')
             ->onDelete('cascade');
-            $table->time('start_time');
-            $table->time('end_time');
+            $table->bigInteger('start_time');
+            $table->bigInteger('end_time');
             $table->timestamps();
         });
     }

@@ -45,7 +45,7 @@ class RouteController extends Controller
         $request->validate([
             'name'     => "required",
             'areaId'   => 'required',
-            'description'    => 'required'
+            // 'description'    => 'required'
         ]);
 
 
@@ -55,10 +55,10 @@ class RouteController extends Controller
             $data = array(
                 'name'              =>  $request->input('name'),
                 'organization_id'   =>  $request->input('areaId'),
-                'description'       =>  $request->input('description'),
+                'description'       =>  $request->input('description') ?? "",
                 'creation_time'       => now()
             );
-            $route    = Route::create($data);
+            Route::create($data);
             return response()->json(['success'=>'Route has been created Successfully']);
         } catch (Exception $e) {
             return response()->json(['error'=>$e->getMessage()],500);
@@ -79,14 +79,14 @@ class RouteController extends Controller
         $request->validate([
             'id'     => "required",
             'name'   => "required",
-            'description'  => 'required'
+            // 'description'  => 'required'
         ]);
         //'areaId' => 'required',
         //store organization;
         try {
             $data = array(
                 'name'     =>  $request->input('name'),
-                'description'  =>  $request->input('description'),
+                'description'  =>  $request->input('description') ?? "",
                 'creation_time'  => now()
             );
             $route->update($data);

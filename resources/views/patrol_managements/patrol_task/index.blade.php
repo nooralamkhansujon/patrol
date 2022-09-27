@@ -19,6 +19,9 @@
         #formOpt-roleIds {
             width: 250px !important;
         }
+        #line-tree-wrap{
+           position:absolute;
+        }
     </style>
 @endsection
 
@@ -322,7 +325,7 @@
                                 </div>
                                 <div class="form-group row mb-2">
                                     <label class="control-label col-sm-3">Route</label>
-                                    <div class="col-sm-9">
+                                    <div class="col-sm-9" style="position: relative;">
                                         <input id="form-line" class="form-control input-tree" name="line"
                                             placeholder='Please choose a route' readonly="readonly">
                                         <input type="hidden" name="lineId">

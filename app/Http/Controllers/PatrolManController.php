@@ -58,7 +58,7 @@ class PatrolManController extends Controller
             'name' =>"required",
             'code_number' => 'required',
             'areaId'   => 'required',
-            'description'   => 'required'
+            // 'description'   => 'required'
         ]);
 
 
@@ -70,7 +70,7 @@ class PatrolManController extends Controller
                 'name'          => $request->input('name'),
                 'code_number'   => $request->input('code_number'),
                 'organization_id' => $request->input('areaId'),
-                'description'   => $request->input('description'),
+                'description'   => $request->input('description') ?? "",
              );
             PatrolMan::create($data);
             return response()->json(['success'=>'PatrolMan has been created Successfully']);
@@ -92,7 +92,7 @@ class PatrolManController extends Controller
             'name'        => "required",
             'code_number' => 'required',
             'areaId'      => 'required',
-            'description' => 'required'
+            // 'description' => 'required'
         ]);
 
 
@@ -102,7 +102,7 @@ class PatrolManController extends Controller
                 'name'          => $request->input('name'),
                 'code_number'   => $request->input('code_number'),
                 'organization_id' => $request->input('areaId'),
-                'description'   => $request->input('description'),
+                'description'   => $request->input('description') ?? "",
              );
             $patrolman->update($data);
             return response()->json(['success'=>'PatrolMan has been updated successfully']);

@@ -20,8 +20,8 @@ return new class extends Migration
             ->constrained('routes')
             ->onUpdate('cascade')
             ->onDelete('cascade');
-            $table->date('start_date');
-            $table->date('end_date')->nullable();//if null then means unlimited
+            $table->bigInteger('start_date');
+            $table->bigInteger('end_date')->nullable();//if null then means unlimited
             $table->tinyInteger('building')->default(0);
             $table->enum('type',[0,1,2,3]);
             $table->integer('cycle')->nullable();

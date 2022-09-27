@@ -16,14 +16,25 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // Organization::create([
-        //     'name'=>'Binary Brains It',
-        //     'description'=>'This is binary brains it',
-        //     'parent_id' => 0
-        // ]);
+        Organization::create([
+            'name'=>'Binary Brains It',
+            'description'=>'This is binary brains it',
+            'parent_id' => 0
+        ]);
         // \App\Models\User::factory(50)->create();
         // \App\Models\PatrolMan::factory(50)->create();
-        \App\Models\CheckPoint::factory(40)->create();
+        // \App\Models\CheckPoint::factory(40)->create();
+
+        
+        \App\Models\User::create( [
+            'name'              => 'nooralam',
+            'email'             => 'nooralam@gmail.com',
+            'email_verified_at' => now(),
+            'password'          => bcrypt('123456'),
+            'organization_id'   =>1,
+            'type'              => 'administrator',
+            // 'remember_token'    => Str::random(10),
+        ]);
 
         // Permission::insert([
         //     [

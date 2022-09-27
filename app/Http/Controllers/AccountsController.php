@@ -59,7 +59,7 @@ class AccountsController extends Controller
         }
         $request->validate([
             'name'     => "required",
-            'email'     => "required",
+            'email'     => "required|unique:users",
             'areaId'   => 'required',
             'type'       => 'required',
             'roleIds'    => 'required'
@@ -106,7 +106,7 @@ class AccountsController extends Controller
         $request->validate([
             'id'       => 'required',
             'name'     => "required",
-            'email'     => "required",
+            'email'     => "required|unique:users,email,".$request->id,
             'areaId'   => 'required',
             'type'       => 'required',
             'roleIds'    => 'required'
